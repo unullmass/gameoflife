@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/unullmass/gameoflife/models"
+	"gameoflife/models"
 
 	log "github.com/sirupsen/logrus"
 )

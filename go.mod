@@ -1,4 +1,4 @@
-module github.com/unullmass/gameoflife
+module gameoflife
 
 go 1.16
 

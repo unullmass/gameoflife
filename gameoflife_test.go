@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/unullmass/gameoflife/models"
+	"gameoflife/models"
 )
 
 func TestExample1(t *testing.T) {
@@ -74,4 +74,17 @@ func TestInvalidSeed(t *testing.T) {
 	if err == nil {
 		t.Fail()
 	}
+}
+
+func TestSmall(t *testing.T) {
+	seed := [][]int{
+		{1, 1, 0},
+		{0, 0, 1},
+		{1, 1, 0},
+	}
+	u, err := models.InitUniverse(seed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u.StartGame()
 }

@@ -26,7 +26,7 @@ func init2DCellArray(r, c int) [][]Cell {
 }
 
 func InitUniverse(seed [][]int) (*Universe, error) {
-	if seed == nil || len(seed) == 0 {
+	if len(seed) == 0 {
 		return nil, errors.New("empty/invalid seed array")
 	}
 
@@ -37,19 +37,9 @@ func InitUniverse(seed [][]int) (*Universe, error) {
 	u.previous = init2DCellArray(u.rows, u.cols)
 	u.current = nil
 
-	// init the border rows and columns
-	for i := 0; i < u.rows; i++ {
-		u.previous[i][0] = NewCell(0, 0)
-		u.previous[i][u.cols-1] = NewCell(0, 0)
-	}
-	for j := 0; j < u.cols; j++ {
-		u.previous[0][j] = NewCell(0, 0)
-		u.previous[u.rows-1][j] = NewCell(0, 0)
-	}
-
-	for i := 1; i < u.rows-2; i++ {
-		for j := 1; j < u.cols-2; j++ {
-			u.previous[i][j] = NewCell(seed[i][j], 0)
+	for i := 0; i < u.rows-2; i++ {
+		for j := 0; j < u.cols-2; j++ {
+			u.previous[i+1][j+1] = NewCell(seed[i][j], 0)
 		}
 	}
 
