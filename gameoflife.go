@@ -1,7 +1,14 @@
 package main
 
+import (
+	"github.com/unullmass/gameoflife/models"
+
+	log "github.com/sirupsen/logrus"
+)
+
 /* Game of Life Design
-1. Represent the initial seed universe in a 25x25 array
+1. Represent the initial seed universe in a NxN array of Cells - use true/false to represent alive dead.
+1.1 Since we are trying to represent infinite array, we will need N+1xN+1 rows to cover all the MxN cells
 2. Each element of the array is a *Cell*
 3. Each Cell can be in either of 2 states: Alive or Dead
 4. For cell at index (r,c), the neighbors will be at :
@@ -32,3 +39,19 @@ Rules for tick:
 14. Can there be a "quantum-stable state" where the state of the universe never changes? Another possible end state?
 15. We will need to keep track of state of the universe across ticks.
 */
+
+func main() {
+	// seed array from example
+	seed := [][]int{
+		{0, 0, 0, 0, 0},
+		{0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 0},
+		{0, 1, 1, 1, 0},
+		{0, 0, 0, 0, 0},
+	}
+	u, err := models.InitUniverse(seed)
+	if err != nil {
+		log.Fatal(err)
+	}
+	u.StartGame()
+}
