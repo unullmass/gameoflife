@@ -31,6 +31,14 @@ func init2DCellArray(r, c int) [][]Cell {
 	return arr
 }
 
+// GetCellFromPrev returns an existing cell in the universe's state else a dead cell if outside the current scope of the universe state
+func (u *Universe) GetCellFromPrev(r, c int) Cell {
+	if r < 0 || r > u.rows-1 || c < 0 || c > u.cols-1 {
+		return NewCell(0, 0)
+	}
+	return u.previous[r][c]
+}
+
 // InitUniverse initializes the state of the universe from a seed state
 func InitUniverse(seed [][]int) (*Universe, error) {
 	if len(seed) == 0 {
@@ -89,21 +97,22 @@ func (u *Universe) IsStateChanged() bool {
 // False - if no change was detected
 func (u *Universe) Tick() bool {
 	u.current = init2DCellArray(u.rows, u.cols)
+
 	// update state from previous
-	for i := 1; i < u.rows-1; i++ {
-		for j := 1; j < u.cols-1; j++ {
+	for i := 0; i < u.rows; i++ {
+		for j := 0; j < u.cols; j++ {
 			cc := &Cell{
-				alive: u.previous[i][j].alive,
+				alive: u.GetCellFromPrev(i, j).alive,
 			}
 			cc.CountLiveNeighbors([]Cell{
-				u.previous[i-1][j-1],
-				u.previous[i-1][j],
-				u.previous[i-1][j+1],
-				u.previous[i][j-1],
-				u.previous[i][j+1],
-				u.previous[i+1][j-1],
-				u.previous[i+1][j],
-				u.previous[i+1][j+1],
+				u.GetCellFromPrev(i-1, j-1),
+				u.GetCellFromPrev(i-1, j),
+				u.GetCellFromPrev(i-1, j+1),
+				u.GetCellFromPrev(i, j-1),
+				u.GetCellFromPrev(i, j+1),
+				u.GetCellFromPrev(i+1, j-1),
+				u.GetCellFromPrev(i+1, j),
+				u.GetCellFromPrev(i+1, j+1),
 			})
 			u.current[i][j] = *cc
 		}

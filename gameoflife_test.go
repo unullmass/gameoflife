@@ -1,9 +1,8 @@
 package main
 
 import (
-	"testing"
-
 	"gameoflife/models"
+	"testing"
 )
 
 func TestExample1(t *testing.T) {
