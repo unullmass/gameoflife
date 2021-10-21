@@ -7,13 +7,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Universe represents the state of the Universe at any instant
 type Universe struct {
-	rows     int
-	cols     int
+	// rows the number of rows that represent a snap-shot of the infinite universe
+	rows int
+	// cols the number of columns that represent a snap-shot of the infinite universe
+	cols int
+	// previous holds the previous state of the universe
 	previous [][]Cell
-	current  [][]Cell
+	// current holds the current state which will result from applying rules on previous state
+	current [][]Cell
 }
 
+// init2DCellArray initializes the initial state of the universe
 func init2DCellArray(r, c int) [][]Cell {
 	var arr [][]Cell
 	if r > 0 && c > 0 {
@@ -25,6 +31,7 @@ func init2DCellArray(r, c int) [][]Cell {
 	return arr
 }
 
+// InitUniverse initializes the state of the universe from a seed state
 func InitUniverse(seed [][]int) (*Universe, error) {
 	if len(seed) == 0 {
 		return nil, errors.New("empty/invalid seed array")
@@ -46,6 +53,7 @@ func InitUniverse(seed [][]int) (*Universe, error) {
 	return &u, nil
 }
 
+// String produces a string representation of current state of the universe
 func (u Universe) String() string {
 	op := ""
 	for i := 0; i < u.rows; i++ {
@@ -57,6 +65,8 @@ func (u Universe) String() string {
 	return op
 }
 
+// IsStateChanged compares the current state of the universe to the previous state
+// returns boolean true if state has changed. false otherwise
 func (u *Universe) IsStateChanged() bool {
 	if u.current == nil {
 		return true
@@ -72,6 +82,11 @@ func (u *Universe) IsStateChanged() bool {
 	return false
 }
 
+// Tick triggers the change in state for the entire universe
+// Current state of all cells are updated based on their previous state
+// All changes happen simultaneously.
+// Returns true - if the state of the universe has changed
+// False - if no change was detected
 func (u *Universe) Tick() bool {
 	u.current = init2DCellArray(u.rows, u.cols)
 	// update state from previous
@@ -106,15 +121,15 @@ func (u *Universe) Tick() bool {
 			// apply game rules
 			if cc.IsAlive() {
 				if cc.liveNeighbors < lowerLimitPopulation {
-					log.Debugf("Apply lower limit population rule on cell (%d,%d)", i, j)
+					log.Infof("Apply lower limit population rule on cell (%d,%d)", i, j)
 					cc.KillCell()
 				} else if cc.liveNeighbors > upperLimitPopulation {
-					log.Debugf("Apply upper limit population rule on cell (%d,%d)", i, j)
+					log.Infof("Apply upper limit population rule on cell (%d,%d)", i, j)
 					cc.KillCell()
 				}
 			} else {
 				if cc.liveNeighbors == upperLimitPopulation {
-					log.Debugf("Apply alive rule on cell (%d,%d)", i, j)
+					log.Infof("Apply alive rule on cell (%d,%d)", i, j)
 					cc.LiveCell()
 				}
 			}
@@ -131,6 +146,8 @@ func (u *Universe) Tick() bool {
 	return true
 }
 
+// StartGame triggers the state changes in universe.
+// Returns when the Tick() stops producing any change of state in universe
 func (u *Universe) StartGame() error {
 	if u == nil {
 		return errors.New("universe state unknown")
